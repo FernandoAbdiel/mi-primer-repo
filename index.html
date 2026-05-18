@@ -3,64 +3,238 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Primer Repo</title>
+    <title>El Camino de la Katana</title>
     <style>
+        :root {
+            --bg-color: #f4f4f9;
+            --text-color: #333;
+            --accent-color: #b71c1c; /* Rojo japonés */
+            --dark-bg: #2c2c2c;
+            --light-text: #f5f5f5;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            line-height: 1.8;
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            overflow-x: hidden;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseCircle {
+            0% { transform: scale(1); opacity: 0.1; }
+            50% { transform: scale(1.05); opacity: 0.2; }
+            100% { transform: scale(1); opacity: 0.1; }
+        }
+
+        @keyframes slashEffect {
+            0% { width: 0; opacity: 1; }
+            100% { width: 100vw; opacity: 0; }
+        }
+
+        /* Header Minimalista */
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            background: radial-gradient(circle at center, #ffffff 0%, #f4f4f9 100%);
+        }
+
+        .circle-bg {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            z-index: 0;
+            animation: pulseCircle 4s infinite ease-in-out;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin: 0;
+            z-index: 1;
+            letter-spacing: -2px;
+            color: var(--dark-bg);
+            animation: fadeIn 1.5s ease-out;
+            position: relative;
+        }
+
+        h1::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 4px;
+            background: var(--accent-color);
+            margin: 10px auto 0;
+            animation: expandLine 1s ease-out 1s forwards;
+        }
+
+        @keyframes expandLine {
+            to { width: 60px; }
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-top: 1rem;
+            z-index: 1;
+            animation: fadeIn 1.5s ease-out 0.5s backwards;
+            max-width: 600px;
+            padding: 0 20px;
+        }
+
+        /* Secciones de Contenido */
+        section {
+            padding: 4rem 2rem;
             max-width: 800px;
             margin: 0 auto;
-            padding: 2rem;
-            background-color: #f4f4f9;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
         }
-        header {
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            font-size: 2rem;
+            border-left: 4px solid var(--accent-color);
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+            color: var(--dark-bg);
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            color: #555;
+        }
+
+        .kanji {
+            font-size: 3rem;
+            color: var(--accent-color);
+            display: block;
             text-align: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid #007bff;
+            margin: 2rem 0;
+            font-weight: bold;
         }
-        h1 {
-            color: #007bff;
-            margin: 0;
-        }
-        .container {
+
+        /* Efecto de corte al hacer click */
+        #slash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
             background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            pointer-events: none;
+            z-index: 9999;
+            display: none;
         }
+
         footer {
             text-align: center;
-            margin-top: 2rem;
+            padding: 2rem;
+            background-color: var(--dark-bg);
+            color: #888;
             font-size: 0.9rem;
-            color: #666;
+            margin-top: 4rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .circle-bg { width: 200px; height: 200px; }
         }
     </style>
 </head>
 <body>
 
+    <div id="slash"></div>
+
     <header>
-        <h1># mi-primer-repo</h1>
-        <p>Bienvenido a mi primera página web desde GitHub</p>
+        <div class="circle-bg"></div>
+        <h1>KATANA</h1>
+        <p class="subtitle">El alma del samurái. Un viaje minimalista a través de la historia, la forja y el espíritu de la espada japonesa.</p>
+        <p style="margin-top: 2rem; font-size: 0.9rem; color: #999; animation: fadeIn 2s ease-out 1s backwards;">(Haz clic en cualquier lugar para desenvainar)</p>
     </header>
 
-    <div class="container">
-        <h2>¡Hola Mundo!</h2>
-        <p>Este sitio web ha sido generado directamente desde el contenido de mi primer repositorio.</p>
-        <p>Aquí es donde comenzaré a documentar mis proyectos, aprender Git y compartir código.</p>
-        
-        <h3>Próximos pasos:</h3>
-        <ul>
-            <li>Agregar más archivos HTML o CSS.</li>
-            <li>Subir imágenes.</li>
-            <li>Escribir más sobre mis proyectos.</li>
+    <section id="origen">
+        <span class="kanji">刀</span>
+        <h2>Origen y Leyenda</h2>
+        <p>La katana no es simplemente un arma; es una extensión del espíritu del samurái. Surgida en el Japón feudal, su curva distintiva fue diseñada para cortar con la máxima eficiencia en un solo movimiento fluido.</p>
+        <p>Se dice que la espada refleja el carácter de quien la porta. Una hoja pulida como un espejo representa una mente clara y un propósito inquebrantable.</p>
+    </section>
+
+    <section id="bushido">
+        <span class="kanji">道</span>
+        <h2>El Código Bushido</h2>
+        <p>Más allá del acero, existe el camino (<i>Do</i>). El Bushido, o "el camino del guerrero", regía la vida del samurái con principios estrictos:</p>
+        <ul style="color: #555; line-height: 1.8;">
+            <li><strong>Gi</strong> (Rectitud): Tomar decisiones correctas sin dudar.</li>
+            <li><strong>Rei</strong> (Respeto): La cortesía hacia los demás, incluso hacia los enemigos.</li>
+            <li><strong>Makoto</strong> (Honestidad): Vivir y actuar con verdad absoluta.</li>
         </ul>
-    </div>
+    </section>
+
+    <section id="forja">
+        <span class="kanji">火</span>
+        <h2>El Arte de la Forja</h2>
+        <p>Crear una katana era un ritual sagrado. Los maestros herreros (<i>Tokotō</i>) purificaban el acero <i>Tamahagane</i> doblando la hoja miles de veces.</p>
+        <p>Este proceso no solo eliminaba impurezas, sino que creaba capas microscópicas que otorgaban a la espada una flexibilidad y dureza simultáneas, capaces de detener un golpe sin romperse y mantener un filo capaz de cortar el aire.</p>
+    </section>
 
     <footer>
-        <p>Creado con ❤️ usando GitHub Pages</p>
+        <p>Cultura Japonesa • Minimalismo • Espíritu</p>
+        <p>&copy; 2023 Mi Primer Repo</p>
     </footer>
+
+    <script>
+        // Animación de aparición al hacer scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+
+        // Efecto de corte al hacer clic
+        document.addEventListener('click', (e) => {
+            const slash = document.getElementById('slash');
+            slash.style.display = 'block';
+            slash.style.top = e.clientY + 'px';
+            slash.style.left = '0';
+            
+            // Reiniciar animación
+            slash.style.animation = 'none';
+            slash.offsetHeight; /* trigger reflow */
+            slash.style.animation = 'slashEffect 0.5s linear forwards';
+
+            setTimeout(() => {
+                slash.style.display = 'none';
+            }, 500);
+        });
+    </script>
 
 </body>
 </html>
