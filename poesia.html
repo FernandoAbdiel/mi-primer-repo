@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Versos Anónimos · un muro silencioso de poesía</title>
+<meta name="description" content="Comparte haikus, refranes, poemas y versos de manera anónima. Un espacio minimalista y sereno para la poesía." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ink: #2b2733;
+    --ink-soft: #6b6478;
+    --paper: #faf7f2;
+    --card: #ffffff;
+    --accent: #c98a6b;      /* terracota suave */
+    --accent-deep: #a86a4f;
+    --sage: #8fa99b;        /* verde salvia */
+    --gold: #d9b45f;
+    --line: rgba(43, 39, 51, 0.08);
+    --shadow-sm: 0 2px 10px rgba(43, 39, 51, 0.06);
+    --shadow-md: 0 12px 40px rgba(43, 39, 51, 0.10);
+    --shadow-lg: 0 24px 70px rgba(43, 39, 51, 0.14);
+    --radius: 22px;
+    --serif: 'Cormorant Garamond', Georgia, serif;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection { background: var(--accent); color: #fff; }
+
+  /* ————— Fondo con manchas suaves (blobs) ————— */
+  .backdrop {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    overflow: hidden;
+  }
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.35;
+    animation: drift 24s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  .blob.b1 { width: 48vw; height: 48vw; top: -14vw; left: -10vw; background: radial-gradient(circle, #f3d9c8, transparent 70%); }
+  .blob.b2 { width: 42vw; height: 42vw; bottom: -12vw; right: -8vw; background: radial-gradient(circle, #d7e4dc, transparent 70%); animation-delay: -8s; animation-duration: 30s; }
+  .blob.b3 { width: 30vw; height: 30vw; top: 38vh; left: 55vw; background: radial-gradient(circle, #efe3c8, transparent 70%); animation-delay: -16s; animation-duration: 36s; }
+
+  @keyframes drift {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to   { transform: translate3d(4vw, -3vh, 0) scale(1.12); }
+  }
+
+  /* Partículas de tinta flotando */
+  .mote {
+    position: fixed;
+    bottom: -10px;
+    border-radius: 50%;
+    background: var(--accent);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+    animation: rise linear forwards;
+  }
+  @keyframes rise {
+    0%   { opacity: 0; transform: translateY(0) translateX(0); }
+    10%  { opacity: 0.5; }
+    90%  { opacity: 0.15; }
+    100% { opacity: 0; transform: translateY(-105vh) translateX(var(--sway, 30px)); }
+  }
+
+  main { position: relative; z-index: 2; max-width: 1100px; margin: 0 auto; padding: 0 24px 90px; }
+
+  /* ————— Header ————— */
+  header {
+    text-align: center;
+    padding: 92px 12px 56px;
+    animation: fadeDown 1s cubic-bezier(.22,.8,.36,1) both;
+  }
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-18px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-size: 0.72rem; letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--ink-soft); font-weight: 500;
+  }
+  .eyebrow::before, .eyebrow::after {
+    content: ""; width: 34px; height: 1px; background: var(--line);
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(2.6rem, 6.5vw, 4.4rem);
+    line-height: 1.08;
+    margin: 18px 0 14px;
+    letter-spacing: 0.01em;
+  }
+  h1 em {
+    font-style: italic;
+    color: var(--accent-deep);
+    position: relative;
+  }
+  h1 em::after {
+    content: "";
+    position: absolute; left: 4%; right: 4%; bottom: 0.08em;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    transform: scaleX(0);
+    transform-origin: center;
+    animation: underline 1.4s 0.9s cubic-bezier(.22,.8,.36,1) forwards;
+  }
+  @keyframes underline { to { transform: scaleX(1); } }
+  .subtitle {
+    color: var(--ink-soft);
+    font-weight: 300;
+    font-size: clamp(0.95rem, 2vw, 1.08rem);
+    max-width: 52ch;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+  /* ————— Formulario ————— */
+  .composer {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 34px 34px 28px;
+    max-width: 680px;
+    margin: 10px auto 26px;
+    position: relative;
+    transition: box-shadow .5s ease, transform .5s ease;
+    animation: fadeUp 1s .25s cubic-bezier(.22,.8,.36,1) both;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(26px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .composer:focus-within {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+  }
+  .composer::before {
+    content: "“";
+    font-family: var(--serif);
+    position: absolute;
+    top: -8px; left: 22px;
+    font-size: 5.5rem;
+    color: var(--accent);
+    opacity: 0.22;
+    line-height: 1;
+    pointer-events: none;
+  }
+  .composer h2 {
+    font-family: var(--serif);
+    font-size: 1.55rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .composer .hint {
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    font-weight: 300;
+    margin-bottom: 20px;
+  }
+  textarea {
+    width: 100%;
+    min-height: 130px;
+    resize: vertical;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: #fdfcfa;
+    padding: 16px 18px;
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: var(--ink);
+    transition: border-color .35s ease, box-shadow .35s ease;
+    outline: none;
+  }
+  textarea::placeholder { color: #b9b2c4; font-style: italic; }
+  textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(201,138,107,.12);
+  }
+
+  .composer-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; }
+  .chip {
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-soft);
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    padding: 8px 15px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all .3s ease;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent-deep); transform: translateY(-1px); }
+  .chip.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fff;
+  }
+
+  .meta-row {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 18px; gap: 14px; flex-wrap: wrap;
+  }
+  .counter { font-size: 0.75rem; color: var(--ink-soft); font-weight: 300; letter-spacing: .05em; }
+  .counter b { color: var(--accent-deep); font-weight: 600; }
+
+  .btn-publish {
+    position: relative;
+    overflow: hidden;
+    border: none;
+    border-radius: 999px;
+    background: var(--ink);
+    color: #fff;
+    font-family: var(--sans);
+    font-weight: 500;
+    font-size: 0.92rem;
+    letter-spacing: 0.06em;
+    padding: 13px 30px;
+    cursor: pointer;
+    transition: transform .3s ease, box-shadow .3s ease, background .3s ease;
+    display: inline-flex; align-items: center; gap: 9px;
+  }
+  .btn-publish svg { width: 15px; height: 15px; transition: transform .35s ease; }
+  .btn-publish:hover {
+    background: var(--accent-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(168,106,79,.35);
+  }
+  .btn-publish:hover svg { transform: translate(3px, -3px); }
+  .btn-publish:active { transform: translateY(0) scale(.98); }
+  .btn-publish::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at var(--rx,50%) var(--ry,50%), rgba(255,255,255,.25), transparent 60%);
+    opacity: 0; transition: opacity .4s;
+  }
+  .btn-publish:hover::after { opacity: 1; }
+
+  /* Ticker de tipo de verso */
+  .ticker {
+    text-align: center;
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 1.02rem;
+    min-height: 1.6em;
+    margin-bottom: 40px;
+    animation: fadeUp 1s .5s cubic-bezier(.22,.8,.36,1) both;
+  }
+  .ticker span {
+    display: inline-block;
+    transition: opacity .5s ease, transform .5s ease;
+  }
+  .ticker span.swap { opacity: 0; transform: translateY(8px); }
+
+  /* ————— Toolbar del muro ————— */
+  .wall-bar {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
+  }
+  .wall-bar h2 {
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 1.9rem;
+  }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter {
+    border: none; background: transparent;
+    font-size: 0.76rem; letter-spacing: .08em; text-transform: lowercase;
+    color: var(--ink-soft); cursor: pointer; padding: 6px 12px;
+    border-radius: 999px; transition: all .3s ease; font-family: var(--sans);
+  }
+  .filter:hover { color: var(--accent-deep); }
+  .filter.active { background: rgba(201,138,107,.14); color: var(--accent-deep); font-weight: 500; }
+
+  /* ————— Mosaico de versos ————— */
+  .wall {
+    columns: 3 300px;
+    column-gap: 20px;
+  }
+  .verse {
+    break-inside: avoid;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 24px 24px 18px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    transition: transform .45s cubic-bezier(.22,.8,.36,1), box-shadow .45s ease;
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  .verse.visible { opacity: 1; transform: translateY(0); }
+  .verse:hover { transform: translateY(-5px); box-shadow: var(--shadow-md); }
+  .verse.new { animation: pop .7s cubic-bezier(.34,1.56,.64,1); }
+  @keyframes pop {
+    0% { transform: scale(.92); box-shadow: 0 0 0 6px rgba(201,138,107,.25); }
+    100% { transform: scale(1); box-shadow: var(--shadow-sm); }
+  }
+  .verse p {
+    font-family: var(--serif);
+    font-size: 1.18rem;
+    line-height: 1.55;
+    white-space: pre-line;
+    color: var(--ink);
+  }
+  .verse footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 16px; padding-top: 12px;
+    border-top: 1px dashed var(--line);
+    font-size: 0.72rem; color: var(--ink-soft); letter-spacing: .04em;
+  }
+  .tag {
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(143,169,155,.16);
+    color: #5f7a6c;
+    font-weight: 500;
+  }
+  .tag[data-t="haiku"]     { background: rgba(201,138,107,.14); color: var(--accent-deep); }
+  .tag[data-t="refrán"]    { background: rgba(217,180,95,.16);  color: #9a7a2e; }
+  .tag[data-t="poema"]     { background: rgba(143,169,155,.18); color: #5f7a6c; }
+  .tag[data-t="microrrelato"] { background: rgba(122,122,180,.14); color: #5d5d96; }
+  .tag[data-t="verso libre"]  { background: rgba(180,122,150,.13); color: #96587a; }
+
+  .like {
+    border: none; background: transparent; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--ink-soft); font-size: 0.74rem; font-family: var(--sans);
+    padding: 4px 8px; border-radius: 999px;
+    transition: color .3s, background .3s, transform .2s;
+  }
+  .like:hover { color: #c96b7b; background: rgba(201,107,123,.08); }
+  .like:active { transform: scale(.92); }
+  .like svg { width: 14px; height: 14px; transition: transform .3s cubic-bezier(.34,1.8,.64,1); }
+  .like.liked { color: #c96b7b; }
+  .like.liked svg { fill: #c96b7b; transform: scale(1.15); }
+
+  /* confetti de corazón */
+  .heart-burst {
+    position: absolute; pointer-events: none; z-index: 5;
+    animation: burst .8s ease-out forwards;
+    font-size: 0.9rem;
+  }
+  @keyframes burst {
+    from { opacity: 1; transform: translate(0,0) scale(.6); }
+    to   { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.3); }
+  }
+
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--ink-soft);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.15rem;
+    display: none;
+  }
+
+  footer.site {
+    margin-top: 70px;
+    text-align: center;
+    font-size: 0.76rem;
+    color: var(--ink-soft);
+    font-weight: 300;
+    letter-spacing: .06em;
+  }
+  footer.site .quill { font-size: 1.3rem; display: block; margin-bottom: 8px; opacity: .6; }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translate(-50%, 80px);
+    background: var(--ink); color: #fff;
+    padding: 13px 26px;
+    border-radius: 999px;
+    font-size: 0.85rem; letter-spacing: .04em;
+    box-shadow: var(--shadow-lg);
+    opacity: 0;
+    transition: transform .55s cubic-bezier(.34,1.4,.64,1), opacity .4s;
+    z-index: 50;
+    pointer-events: none;
+  }
+  .toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+  @media (max-width: 640px) {
+    header { padding-top: 64px; }
+    .composer { padding: 26px 22px 22px; }
+    .wall { columns: 1; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<main>
+  <header>
+    <span class="eyebrow">sin nombre · sin rostro</span>
+    <h1>Versos que <em>vuelan</em> solos</h1>
+    <p class="subtitle">Un muro silencioso donde cualquiera puede soltar un haiku, un refrán o un poema al viento. Sin cuentas, sin firmas: solo palabras.</p>
+  </header>
+
+  <!-- Formulario -->
+  <section class="composer" aria-label="Escribir un nuevo verso">
+    <h2>Suelta tu verso</h2>
+    <p class="hint">Escribe anónimamente. Elige un formato si quieres, o déjalo ser lo que sea.</p>
+    <textarea id="verseInput" maxlength="600" placeholder="Viejo estanque…&#10;una rana salta—&#10;sonido del agua"></textarea>
+    <div class="composer-row">
+      <div class="chips" id="chips" role="radiogroup" aria-label="Tipo de verso">
+        <button class="chip active" data-type="verso libre">verso libre</button>
+        <button class="chip" data-type="haiku">haiku</button>
+        <button class="chip" data-type="refrán">refrán</button>
+        <button class="chip" data-type="poema">poema</button>
+        <button class="chip" data-type="microrrelato">microrrelato</button>
+      </div>
+    </div>
+    <div class="meta-row">
+      <span class="counter"><b id="count">0</b> / 600 caracteres</span>
+      <button class="btn-publish" id="publishBtn">
+        Soltar al viento
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>
+      </button>
+    </div>
+  </section>
+
+  <p class="ticker" id="ticker" aria-hidden="true"><span>«la poesía es el eco de un arcoíris en la hierba»</span></p>
+
+  <!-- Muro -->
+  <section aria-label="Muro de versos">
+    <div class="wall-bar">
+      <h2>El muro anónimo</h2>
+      <div class="filters" id="filters">
+        <button class="filter active" data-filter="todos">todos</button>
+        <button class="filter" data-filter="haiku">haikus</button>
+        <button class="filter" data-filter="refrán">refranes</button>
+        <button class="filter" data-filter="poema">poemas</button>
+        <button class="filter" data-filter="microrrelato">relatos</button>
+        <button class="filter" data-filter="verso libre">versos libres</button>
+      </div>
+    </div>
+    <div class="wall" id="wall"></div>
+    <p class="empty" id="empty">Aún nadie ha soltado un verso aquí… sé el primero ✦</p>
+  </section>
+
+  <footer class="site">
+    <span class="quill">✒︎</span>
+    hecho con calma — tus versos viven en este navegador, anónimos y libres
+  </footer>
+</main>
+
+<div class="toast" id="toast">tu verso salió volando ✦</div>
+
+<script>
+(() => {
+  const STORAGE_KEY = 'versos-anonimos-v1';
+  const LIKES_KEY   = 'versos-anonimos-likes';
+
+  /* ——— Datos semilla para que el muro nunca esté vacío ——— */
+  const seed = [
+    { id: 's1', type: 'haiku', likes: 12, text: 'Viejo estanque —\nuna rana salta,\nsonido del agua.' },
+    { id: 's2', type: 'refrán', likes: 7, text: 'A caballo regalado no le mires el dentado.' },
+    { id: 's3', type: 'verso libre', likes: 21, text: 'Hoy el silencio me prestó su voz\ny por fin dije lo que callaba.' },
+    { id: 's4', type: 'poema', likes: 9, text: 'No busques en el cielo\nlo que germina abajo:\nla raíz no pregunta,\nhace.' },
+    { id: 's5', type: 'microrrelato', likes: 15, text: 'El último pasajero bajó en una estación que ya no existía. El tren no se detuvo a mirarlo.' },
+    { id: 's6', type: 'haiku', likes: 5, text: 'Luz en la ventana.\nAlguien escribe y borra.\nLa noche respira.' },
+    { id: 's7', type: 'refrán', likes: 4, text: 'No dejes para mañana lo que puedas hacer hoy.' },
+    { id: 's8', type: 'verso libre', likes: 18, text: 'Somos cartas que el mar nunca envía,\ndobladas por la mitad.' },
+  ];
+
+  const wall = document.getElementById('wall');
+  const emptyMsg = document.getElementById('empty');
+  const input = document.getElementById('verseInput');
+  const count = document.getElementById('count');
+  const chips = document.querySelectorAll('#chips .chip');
+  const filters = document.querySelectorAll('#filters .filter');
+  const toast = document.getElementById('toast');
+  const publishBtn = document.getElementById('publishBtn');
+
+  let currentType = 'verso libre';
+  let currentFilter = 'todos';
+  let liked = new Set(JSON.parse(localStorage.getItem(LIKES_KEY) || '[]'));
+
+  function loadVerses() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (Array.isArray(raw) && raw.length) return raw;
+    } catch (e) {}
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+    return [...seed];
+  }
+  let verses = loadVerses();
+
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(verses));
+    localStorage.setItem(LIKES_KEY, JSON.stringify([...liked]));
+  }
+
+  const heartSVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
+
+  function timeAgo(ts) {
+    if (!ts) return 'anónimo';
+    const s = Math.floor((Date.now() - ts) / 1000);
+    if (s < 60) return 'hace un instante';
+    const m = Math.floor(s / 60);
+    if (m < 60) return `hace ${m} min`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `hace ${h} h`;
+    const d = Math.floor(h / 24);
+    return `hace ${d} día${d > 1 ? 's' : ''}`;
+  }
+
+  function render(newId) {
+    wall.innerHTML = '';
+    const shown = verses.filter(v => currentFilter === 'todos' || v.type === currentFilter);
+    emptyMsg.style.display = shown.length ? 'none' : 'block';
+
+    shown.forEach((v, i) => {
+      const card = document.createElement('article');
+      card.className = 'verse' + (v.id === newId ? ' new' : '');
+      card.dataset.id = v.id;
+
+      const likes = v.likes + (liked.has(v.id) ? 1 : 0);
+      card.innerHTML = `
+        <p></p>
+        <footer>
+          <span class="tag" data-t="${v.type}">${v.type}</span>
+          <span style="display:flex;align-items:center;gap:10px">
+            <span>${timeAgo(v.ts)}</span>
+            <button class="like ${liked.has(v.id) ? 'liked' : ''}" aria-label="me gusta">
+              ${heartSVG}<span class="n">${likes}</span>
+            </button>
+          </span>
+        </footer>`;
+      card.querySelector('p').textContent = v.text; // previene XSS
+      card.querySelector('.like').addEventListener('click', (e) => toggleLike(v.id, e.currentTarget, card));
+      wall.appendChild(card);
+
+      // aparición escalonada suave
+      setTimeout(() => card.classList.add('visible'), 60 * Math.min(i, 12));
+    });
+  }
+
+  function toggleLike(id, btn, card) {
+    if (liked.has(id)) liked.delete(id);
+    else {
+      liked.add(id);
+      burstHearts(card, btn);
+    }
+    const v = verses.find(x => x.id === id);
+    btn.classList.toggle('liked', liked.has(id));
+    btn.querySelector('.n').textContent = v.likes + (liked.has(id) ? 1 : 0);
+    save();
+  }
+
+  function burstHearts(card, btn) {
+    const cr = card.getBoundingClientRect();
+    const br = btn.getBoundingClientRect();
+    for (let i = 0; i < 6; i++) {
+      const h = document.createElement('span');
+      h.className = 'heart-burst';
+      h.textContent = '♥';
+      h.style.color = ['#c96b7b', '#d9b45f', '#c98a6b'][i % 3];
+      h.style.left = (br.left - cr.left + br.width / 2) + 'px';
+      h.style.top = (br.top - cr.top) + 'px';
+      h.style.setProperty('--dx', (Math.random() * 60 - 30) + 'px');
+      h.style.setProperty('--dy', (-30 - Math.random() * 40) + 'px');
+      card.appendChild(h);
+      setTimeout(() => h.remove(), 850);
+    }
+  }
+
+  /* ——— Chips de tipo ——— */
+  chips.forEach(c => c.addEventListener('click', () => {
+    chips.forEach(x => x.classList.remove('active'));
+    c.classList.add('active');
+    currentType = c.dataset.type;
+  }));
+
+  /* ——— Filtros ——— */
+  filters.forEach(f => f.addEventListener('click', () => {
+    filters.forEach(x => x.classList.remove('active'));
+    f.classList.add('active');
+    currentFilter = f.dataset.filter;
+    render();
+  }));
+
+  /* ——— Contador ——— */
+  input.addEventListener('input', () => count.textContent = input.value.length);
+
+  /* ——— Publicar ——— */
+  publishBtn.addEventListener('mousemove', (e) => {
+    const r = publishBtn.getBoundingClientRect();
+    publishBtn.style.setProperty('--rx', ((e.clientX - r.left) / r.width * 100) + '%');
+    publishBtn.style.setProperty('--ry', ((e.clientY - r.top) / r.height * 100) + '%');
+  });
+
+  function publish() {
+    const text = input.value.trim();
+    if (!text) {
+      input.focus();
+      input.style.borderColor = '#c96b7b';
+      setTimeout(() => input.style.borderColor = '', 900);
+      return;
+    }
+    const id = 'u' + Date.now();
+    verses.unshift({ id, type: currentType, text, likes: 0, ts: Date.now() });
+    save();
+    input.value = '';
+    count.textContent = '0';
+    currentFilter = 'todos';
+    filters.forEach(x => x.classList.toggle('active', x.dataset.filter === 'todos'));
+    render(id);
+    showToast('tu verso salió volando ✦');
+    releaseInk(8);
+    wall.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  publishBtn.addEventListener('click', publish);
+  input.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') publish();
+  });
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2600);
+  }
+
+  /* ——— Partículas de tinta ambientales ——— */
+  function releaseInk(n) {
+    for (let i = 0; i < n; i++) {
+      const m = document.createElement('span');
+      m.className = 'mote';
+      const size = 3 + Math.random() * 5;
+      m.style.width = m.style.height = size + 'px';
+      m.style.left = Math.random() * 100 + 'vw';
+      m.style.setProperty('--sway', (Math.random() * 120 - 60) + 'px');
+      m.style.animationDuration = (9 + Math.random() * 10) + 's';
+      m.style.background = ['var(--accent)', 'var(--sage)', 'var(--gold)'][Math.floor(Math.random() * 3)];
+      document.body.appendChild(m);
+      setTimeout(() => m.remove(), 20000);
+    }
+  }
+  setInterval(() => releaseInk(1), 2500);
+  releaseInk(5);
+
+  /* ——— Ticker de frases ——— */
+  const quotes = [
+    '«la poesía es el eco de un arcoíris en la hierba»',
+    '«decir todo sin nombrar nada» — anonimato',
+    '«un haiku es un respiro de tres líneas»',
+    '«los refranes son la sabiduría que viaja de boca en boca»',
+    '«escribe como si el viento fuera a leerlo»',
+    '«no firmes. vuela.»',
+  ];
+  const tickerSpan = document.querySelector('#ticker span');
+  let qi = 0;
+  setInterval(() => {
+    tickerSpan.classList.add('swap');
+    setTimeout(() => {
+      qi = (qi + 1) % quotes.length;
+      tickerSpan.textContent = quotes[qi];
+      tickerSpan.classList.remove('swap');
+    }, 520);
+  }, 5200);
+
+  render();
+})();
+</script>
+</body>
+</html>
